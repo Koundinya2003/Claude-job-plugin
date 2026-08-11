@@ -1,0 +1,127 @@
+candidate:
+  name: "Aditya K. Koundinya"
+  email: "aditya003koundinya@gmail.com"
+  phone: ""
+  linkedin: ""
+  portfolio: ""
+  experience_level: "Fresher / Early Career"
+  education:
+    degree: "B.Tech"
+    field: "Computer Science"
+    university: "VIT Bhopal"
+    graduation_year: 2025
+  experience:
+    - company: "Bosch Automotive Electronics Pvt. Ltd."
+      role: "Data Analyst Intern"
+      department: "Manufacturing Digitalization"
+      start_date: "2024-07"
+      end_date: "2024-11"
+      description: "Data analysis and manufacturing digitalization"
+  fellowships:
+    - name: "NextLeap Product Management Fellowship"
+      cohort: 47
+      year: 2026
+  positioning: >
+    Product-oriented Computer Science graduate with experience in product analytics,
+    data analysis, user problem discovery, metric design, AI products, and stakeholder delivery.
+  skills:
+    - Product Analytics
+    - Data Analysis
+    - User Research
+    - Metric Design
+    - AI Products
+    - Stakeholder Management
+    - Python
+    - SQL
+    - Data Visualization
+
+target_roles:
+  tier1:
+    - "Associate Product Manager"
+    - "APM"
+    - "Product Analyst"
+    - "AI Product Analyst"
+    - "AI Product Management"
+    - "Product Management Intern"
+    - "AI Product Management Intern"
+  tier2:
+    - "Product Operations"
+    - "Product Operations Analyst"
+    - "Business Analyst"
+    - "Growth Analyst"
+    - "Product Strategy Analyst"
+    - "Data Analyst"
+
+reject_roles:
+  - "Software Engineer"
+  - "Backend Engineer"
+  - "Frontend Engineer"
+  - "DevOps Engineer"
+  - "Data Engineer"
+  - "Machine Learning Engineer"
+  - "QA Engineer"
+  - "Test Engineer"
+  - "IT Support"
+  - "Technical Support"
+  - "Sales"
+  - "Telecalling"
+  - "Customer Support"
+  - "Marketing Executive"
+  - "HR Executive"
+
+experience_filter:
+  target_levels:
+    - "Fresher"
+    - "Entry Level"
+    - "Early Career"
+    - "Junior"
+    - "Internship"
+    - "0-2 years"
+  max_flexible_years: 2
+  reject_levels:
+    - "Senior"
+    - "Lead"
+    - "Principal"
+    - "Manager"
+    - "Director"
+    - "VP"
+  reject_min_years: 3
+
+locations:
+  primary:
+    - "Bengaluru, Karnataka, India"
+    - "Bangalore, Karnataka, India"
+    - "Bengaluru"
+    - "Bangalore"
+  acceptable:
+    - "Remote, India"
+    - "Remote"
+    - "Hybrid, Bengaluru"
+    - "Hybrid, Bangalore"
+  other_india:
+    - "Mumbai"
+    - "Delhi"
+    - "Hyderabad"
+    - "Pune"
+    - "Chennai"
+    - "Gurgaon"
+    - "Noida"
+
+search:
+  max_daily_jobs: 30
+  minimum_relevance_score: 70
+  high_priority_score: 85
+  search_frequency: "daily"
+  search_time: "09:00"
+  timezone: "Asia/Kolkata"
+
+scoring_weights:
+  role_relevance: 30
+  candidate_fit: 20
+  experience_fit: 15
+  location_fit: 10
+  company_quality: 10
+  recency: 10
+  application_quality: 5
+
+mode: "discovery"
