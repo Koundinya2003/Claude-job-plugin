@@ -18,3 +18,5 @@ data/*.db-wal
 resumes/*.pdf
 resumes/*.docx
 process_discovered_jobs.py
+dist/
+*.zip
