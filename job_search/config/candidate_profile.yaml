@@ -1,39 +1,126 @@
 candidate:
-  name: "Aditya K. Koundinya"
-  email: "aditya003koundinya@gmail.com"
+  name: "Aditya K Koundinya"
+  email: "koundinyaaditya2853@gmail.com"
   phone: "+91-9601250936"
-  linkedin: "www.linkedin.com/in/adityakkoundinya"
+  linkedin: "https://www.linkedin.com/in/adityakkoundinya"
+  github: "https://github.com/Koundinya2003"
   portfolio: "https://koundinya2003.github.io/Portfolio/"
+  location: "Bengaluru, India"
   experience_level: "Fresher / Early Career"
+
   education:
     degree: "B.Tech"
-    field: "Computer Science"
-    university: "VIT Bhopal"
+    field: "Computer Science & Engineering"
+    university: "Vellore Institute of Technology, Bhopal"
     graduation_year: 2025
+    gpa: "7.7/10"
+
   experience:
-    - company: "Bosch Automotive Electronics Pvt. Ltd."
+    - company: "Bosch Automotive Electronics"
       role: "Data Analyst Intern"
       department: "Manufacturing Digitalization"
+      location: "Bengaluru"
       start_date: "2024-07"
       end_date: "2024-11"
-      description: "Data analysis and manufacturing digitalization"
+      description: >
+        Partnered with manufacturing and maintenance teams to identify reporting gaps
+        and translate operational needs into 4 dashboard solutions for downtime,
+        maintenance KPIs, tooling management, and process quality. Built interactive
+        Tableau dashboards unifying manufacturing data across machines, production lines,
+        and time periods. Automated data preparation and KPI reporting using Python,
+        Oracle SQL, and HiveQL. Defined and visualized MTTR, MTBF, Technical Availability,
+        and Technical Loss metrics.
+      highlights:
+        - "4 dashboard solutions adopted by manufacturing teams"
+        - "Automated KPI reporting using Python, Oracle SQL, HiveQL"
+        - "Defined MTTR, MTBF, Technical Availability metrics"
+
   fellowships:
     - name: "NextLeap Product Management Fellowship"
       cohort: 47
-      year: 2026
+      period: "Mar-Jun 2026"
+      highlights:
+        - "Self-directed teardowns and growth PRDs"
+        - "Eureka by ALLEN, voice input in urban India, n8n onboarding"
+
+  certifications:
+    - "PM Simulation (EA, Forage)"
+    - "Quantitative Research (JPMorgan, Forage)"
+    - "ML Specialization (Coursera)"
+
   positioning: >
-    Product-oriented Computer Science graduate with experience in product analytics,
-    data analysis, user problem discovery, metric design, AI products, and stakeholder delivery.
+    Computer Science graduate and NextLeap Product Management Fellow who builds AI products
+    end to end across LLMs, RAG, product discovery, and analytics. Built and deployed AI
+    products spanning conversational commerce, voice-of-customer analysis, and financial
+    planning. At Bosch, translated operational needs into self-serve dashboards used by
+    manufacturing teams.
+
   skills:
-    - Product Analytics
-    - Data Analysis
-    - User Research
-    - Metric Design
-    - AI Products
-    - Stakeholder Management
-    - Python
-    - SQL
-    - Data Visualization
+    product_management:
+      - "Product discovery"
+      - "User research"
+      - "PRDs"
+      - "MVP scoping"
+      - "RICE prioritization"
+      - "Roadmapping"
+      - "North Star metrics"
+      - "A/B experimentation"
+    ai_ml:
+      - "LLMs"
+      - "RAG"
+      - "Prompt engineering"
+      - "AI evaluation"
+      - "LLM guardrails"
+      - "Embeddings"
+      - "Semantic search (FAISS)"
+      - "OpenAI API"
+    data_analytics:
+      - "SQL"
+      - "Python (Pandas)"
+      - "Tableau"
+      - "ETL automation"
+      - "Funnel & activation analysis"
+      - "KPI design"
+      - "REST APIs"
+
+  projects:
+    - name: "AI Shopping Assistant"
+      tagline: "Conversational grocery commerce"
+      tech: "Next.js, TypeScript, Firestore, LLM"
+      highlights:
+        - "Converts natural-language intent into cart-ready baskets"
+        - "Query-to-cart conversion as primary product metric"
+        - "Schema validation and keyword fallback for catalog grounding"
+
+    - name: "AI Discovery Engine"
+      tagline: "Voice-of-customer opportunity ranking"
+      tech: "Python, LLM, Pandas, Streamlit"
+      highlights:
+        - "Aggregates 800+ reviews across 6 sources into ranked pain points"
+        - "Insights traceable to source reviews"
+
+    - name: "Wealth Coach AI"
+      tagline: "AI-powered financial planning assistant"
+      tech: "Python, Streamlit, OpenRouter, DeepSeek"
+      highlights:
+        - "Personalized financial plans from income, expenses, goals, risk appetite"
+        - "Fault-tolerant AI pipeline with cleaning, deduplication, fallbacks"
+
+    - name: "Recruiter Outreach Intelligence"
+      tagline: "Ranked, trackable job-search pipeline"
+      tech: "Python, FastAPI, PostgreSQL, Streamlit, LLM"
+      highlights:
+        - "4 scoring engines (job relevance, hiring activity, recruiter relevance, outreach priority)"
+        - "257 offline tests"
+        - "State machine tracking for every recruiter contact"
+
+    - name: "FundBot"
+      tagline: "Grounded finance assistant"
+      tech: "Python, RAG, FAISS, Sentence Transformers, OpenAI API"
+      highlights:
+        - "Grounded in 300+ Mirae Asset fact sheets"
+        - "92.7% top-1 retrieval accuracy"
+        - "111 regression tests"
 
 target_roles:
   tier1:

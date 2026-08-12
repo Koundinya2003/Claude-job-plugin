@@ -29,9 +29,16 @@ CANDIDATE_FIT_KEYWORDS = [
     "data analysis", "python", "sql", "analytics", "metrics",
     "data visualization", "excel", "tableau", "power bi",
     "product analytics", "user research", "stakeholder",
-    "ai", "machine learning", "manufacturing", "iot",
+    "ai", "machine learning", "llm", "rag", "nlp",
+    "prompt engineering", "openai", "embeddings",
+    "product discovery", "prd", "mvp", "roadmap",
+    "rice", "prioritization", "a/b test", "experimentation",
+    "north star", "kpi", "funnel", "activation",
+    "etl", "api", "rest api", "fastapi",
+    "manufacturing", "iot", "dashboard",
     "computer science", "b.tech", "fresher", "fresh graduate",
     "entry level", "intern", "0-1 years", "0-2 years",
+    "streamlit", "next.js", "typescript",
 ]
 
 
