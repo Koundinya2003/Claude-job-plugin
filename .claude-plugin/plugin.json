@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "job-search",
+  "displayName": "Job Search",
+  "version": "1.0.0",
+  "description": "Quality-first job discovery, scoring and application tracking for APM, Product Analyst and AI Product roles. Validates listings, rejects scams and mismatched roles, scores 0-100 against your profile, and never applies twice.",
+  "author": {
+    "name": "Aditya K Koundinya"
+  },
+  "repository": "https://github.com/Koundinya2003/Claude-job-plugin",
+  "license": "MIT",
+  "keywords": [
+    "jobs",
+    "job-search",
+    "product-management",
+    "apm",
+    "applications",
+    "career"
+  ]
+}

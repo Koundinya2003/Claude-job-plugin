@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "job-search": {
+      "command": "python3",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp_server.py"],
+      "env": {
+        "PYTHONPATH": "${CLAUDE_PLUGIN_ROOT}",
+        "JOB_PLUGIN_CONFIG": "${CLAUDE_PLUGIN_ROOT}/job_search/config/candidate_profile.yaml"
+      }
+    }
+  }
+}

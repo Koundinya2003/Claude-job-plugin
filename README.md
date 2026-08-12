@@ -33,37 +33,44 @@ your actual profile, and keeps a permanent record so you never apply twice.
 
 **85+** HIGH PRIORITY · **70-84** GOOD MATCH · **below 70** DO NOT APPLY
 
-## Install for Claude Desktop
+## Install
 
-**1. Unzip somewhere permanent.** The plugin stores your job database next to its
-own files, so don't run it from Downloads or a temp folder.
+The package is a Claude plugin: a `.claude-plugin/plugin.json` manifest, three
+skills, and an MCP server wired up in `.mcp.json`.
 
-**2. Install dependencies:**
+**1. Install the Python dependencies.** The MCP server needs these on the `python3`
+that Claude will launch:
 
 ```bash
-cd /path/to/claude-job-plugin
-pip install -r requirements.txt
+pip install pyyaml "mcp>=2.0.0"
 ```
 
-**3. Add it to `claude_desktop_config.json`:**
+**2. Load the plugin.** Point Claude at the zip or the unzipped directory:
 
-- macOS — `~/Library/Application Support/Claude/claude_desktop_config.json`
-- Windows — `%APPDATA%\Claude\claude_desktop_config.json`
-
-```json
-{
-  "mcpServers": {
-    "job-search": {
-      "command": "python3",
-      "args": ["/absolute/path/to/claude-job-plugin/mcp_server.py"]
-    }
-  }
-}
+```bash
+claude --plugin-dir ./job-search
+claude --plugin-dir ./job-search.zip
 ```
 
-Use an absolute path, and `python` instead of `python3` on Windows.
+To keep it loaded across sessions without the flag, unzip it into your skills
+directory as `~/.claude/skills/job-search/` — it auto-loads from there.
 
-**4. Restart Claude Desktop.** The job-search tools appear in the tools menu.
+**3. Check it registered.** Run `/plugin` and look for `job-search`; the Errors tab
+reports a server that failed to start. A missing dependency shows up there.
+
+Your database lives at `~/.claude-job-plugin/job_applications.db`, outside the
+plugin directory, so plugin updates never wipe your application history. Override
+with `JOB_PLUGIN_DATA_DIR` if you want it elsewhere.
+
+### Skills
+
+| Skill | Use |
+|---|---|
+| `/job-search:find-jobs` | Discover, validate and score new openings |
+| `/job-search:job-report` | Report, queue and stats from stored jobs |
+| `/job-search:apply-jobs` | Prepare applications and outreach drafts |
+
+Claude also invokes these on its own when you ask in plain language.
 
 ## Set up your profile
 

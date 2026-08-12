@@ -1,9 +1,30 @@
+import os
 import sqlite3
 import json
 from datetime import datetime
 from pathlib import Path
 
-DB_PATH = Path(__file__).parent.parent.parent / "data" / "job_applications.db"
+
+def _resolve_data_dir():
+    """Where the job database lives.
+
+    JOB_PLUGIN_DATA_DIR wins when set. Otherwise prefer the repo's own data/
+    directory for a source checkout, and fall back to ~/.claude-job-plugin so a
+    plugin install — whose directory is versioned and replaced on every update —
+    keeps its application history across upgrades.
+    """
+    env_dir = os.environ.get("JOB_PLUGIN_DATA_DIR")
+    if env_dir:
+        return Path(env_dir).expanduser()
+
+    repo_data = Path(__file__).parent.parent.parent / "data"
+    if repo_data.is_dir():
+        return repo_data
+
+    return Path.home() / ".claude-job-plugin"
+
+
+DB_PATH = _resolve_data_dir() / "job_applications.db"
 
 
 def get_connection():
