@@ -1,0 +1,331 @@
+<title>Job Search Plugin</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&display=swap">
+<style>
+/* Identity: a station departures board for job listings. Split flap cells, signal yellow for the board, green for go, red for rejected, on pale sage paper (deep night blue in dark). */
+:root {
+  --paper: #eef2ea;
+  --ink: #14213d;
+  --muted: #586577;
+  --board: #1c2740;
+  --cell: #2a3655;
+  --boardtext: #f2f4f8;
+  --yellow: #f2b500;
+  --go: #23955a;
+  --stop: #d23c43;
+  --rule: #c9d3c3;
+  --card: #f8faf6;
+  --display: "Big Shoulders Display", "Arial Narrow", sans-serif;
+  --body: "Atkinson Hyperlegible", "Segoe UI", sans-serif;
+  --mono: "Space Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0d1320; --ink: #e5e9f1; --muted: #93a0b5; --board: #172036; --cell: #222d48; --boardtext: #f2f4f8;
+    --yellow: #ffcd3c; --go: #4fd08d; --stop: #ff6b72; --rule: #27324a; --card: #131b2c;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0d1320; --ink: #e5e9f1; --muted: #93a0b5; --board: #172036; --cell: #222d48; --boardtext: #f2f4f8;
+  --yellow: #ffcd3c; --go: #4fd08d; --stop: #ff6b72; --rule: #27324a; --card: #131b2c;
+}
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.45; margin: 0; }
+.sheet { width: 960px; margin: 0 auto; }
+section { padding: 32px 40px; border-bottom: 2px solid var(--rule); }
+.kick { font-family: var(--mono); font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); display: flex; gap: 12px; align-items: center; }
+.kick .gate { background: var(--yellow); color: #14213d; font-weight: 700; padding: 2px 8px; }
+h1 { font-family: var(--display); font-weight: 900; font-size: 60px; line-height: .9; text-transform: uppercase; margin: 12px 0 10px; letter-spacing: .005em; }
+h1 span { color: var(--go); }
+h2 { font-family: var(--display); font-weight: 800; font-size: 40px; line-height: .95; text-transform: uppercase; margin: 8px 0 8px; }
+h2 span { color: var(--go); }
+.lede { font-size: 16px; max-width: 58ch; margin: 0; }
+.muted { color: var(--muted); }
+
+/* ---------- hero ---------- */
+.hero { display: grid; grid-template-columns: 400px 1fr; gap: 28px; align-items: start; }
+.facts { margin-top: 16px; display: grid; gap: 6px; font-family: var(--mono); font-size: 12px; }
+.facts div { display: flex; gap: 10px; border-top: 1px solid var(--rule); padding-top: 6px; }
+.facts b { color: var(--go); min-width: 36px; }
+.board { background: var(--board); border-radius: 6px; padding: 14px 14px 12px; color: var(--boardtext); box-shadow: inset 0 0 0 3px #0b1222; }
+.bhead { display: flex; justify-content: space-between; align-items: baseline; font-family: var(--display); font-weight: 800; font-size: 26px; text-transform: uppercase; color: var(--yellow); letter-spacing: .04em; }
+.bhead small { font-family: var(--mono); font-size: 10.5px; color: #93a0b5; letter-spacing: .1em; font-weight: 400; }
+.cols, .row { display: grid; grid-template-columns: 1fr 104px 128px; gap: 8px; align-items: center; }
+.cols { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; color: #93a0b5; text-transform: uppercase; margin: 8px 0 4px; }
+.row { margin-top: 9px; }
+.fl { font-family: var(--mono); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; background: linear-gradient(var(--cell) 49.6%, rgba(0,0,0,.3) 49.6%, rgba(0,0,0,.3) 50.4%, var(--cell) 50.4%); padding: 8px 8px; border-radius: 3px; white-space: nowrap; overflow: hidden; }
+.fl.y { color: var(--yellow); }
+.stat { position: relative; height: 34px; perspective: 300px; }
+.stat span { position: absolute; inset: 0; display: flex; align-items: center; padding: 0 8px; border-radius: 3px; font-family: var(--mono); font-size: 12.5px; font-weight: 700; letter-spacing: .04em; background: linear-gradient(var(--cell) 49.6%, rgba(0,0,0,.3) 49.6%, rgba(0,0,0,.3) 50.4%, var(--cell) 50.4%); backface-visibility: hidden; transform-origin: center; }
+.stat .a { color: #93a0b5; animation: flipA 7s infinite; }
+.stat .b { animation: flipB 7s infinite; }
+.stat .b.hi { color: #14213d; background: linear-gradient(var(--yellow) 49.6%, rgba(0,0,0,.3) 49.6%, rgba(0,0,0,.3) 50.4%, var(--yellow) 50.4%); }
+.stat .b.ok { color: #0b1222; background: linear-gradient(#4fd08d 49.6%, rgba(0,0,0,.3) 49.6%, rgba(0,0,0,.3) 50.4%, #4fd08d 50.4%); }
+.stat .b.no { color: #fff; background: linear-gradient(#d23c43 49.6%, rgba(0,0,0,.3) 49.6%, rgba(0,0,0,.3) 50.4%, #d23c43 50.4%); }
+.row:nth-child(4) .stat span { animation-delay: .5s; }
+.row:nth-child(5) .stat span { animation-delay: 1s; }
+.row:nth-child(6) .stat span { animation-delay: 1.5s; }
+.row:nth-child(7) .stat span { animation-delay: 2s; }
+.row:nth-child(8) .stat span { animation-delay: 2.5s; }
+@keyframes flipA { 0%, 30% { transform: rotateX(0); opacity: 1; } 36%, 92% { transform: rotateX(-90deg); opacity: 0; } 98%, 100% { transform: rotateX(0); opacity: 1; } }
+@keyframes flipB { 0%, 34% { transform: rotateX(90deg); opacity: 0; } 40%, 88% { transform: rotateX(0); opacity: 1; } 94%, 100% { transform: rotateX(90deg); opacity: 0; } }
+.bfoot { margin-top: 10px; display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10.5px; color: #93a0b5; }
+.blink { color: var(--yellow); animation: blink 1.2s steps(2) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ---------- pipeline ---------- */
+.lane { display: grid; grid-template-columns: repeat(8, 1fr); margin-top: 18px; position: relative; }
+.lane::before { content: ""; position: absolute; left: 4%; right: 4%; top: 21px; height: 4px; background: repeating-linear-gradient(90deg, var(--ink) 0 14px, transparent 14px 22px); opacity: .35; }
+.stop { text-align: center; position: relative; animation: rise .45s ease-out both; }
+.stop i { display: block; width: 46px; height: 46px; margin: 0 auto 6px; border-radius: 50%; background: var(--card); border: 3px solid var(--ink); font-style: normal; font-family: var(--display); font-weight: 900; font-size: 22px; line-height: 40px; }
+.stop.gate i { background: var(--yellow); border-color: var(--yellow); color: #14213d; }
+.stop b { display: block; font-family: var(--display); font-size: 18px; text-transform: uppercase; line-height: 1; }
+.stop small { display: block; font-size: 11.5px; color: var(--muted); line-height: 1.25; margin-top: 3px; padding: 0 4px; }
+.stop:nth-child(2) { animation-delay: .1s; } .stop:nth-child(3) { animation-delay: .2s; } .stop:nth-child(4) { animation-delay: .3s; } .stop:nth-child(5) { animation-delay: .4s; } .stop:nth-child(6) { animation-delay: .5s; } .stop:nth-child(7) { animation-delay: .6s; } .stop:nth-child(8) { animation-delay: .7s; }
+@keyframes rise { from { opacity: 0; transform: translateY(12px); } }
+.bins { display: grid; grid-template-columns: 1.15fr 1fr; gap: 16px; margin-top: 22px; }
+.bin { background: var(--card); border: 1.5px solid var(--rule); padding: 12px 14px; border-radius: 4px; }
+.bin h3 { margin: 0 0 8px; font-family: var(--display); font-size: 20px; text-transform: uppercase; font-weight: 800; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-family: var(--mono); font-size: 11.5px; padding: 3px 8px; border: 1.5px solid var(--stop); color: var(--stop); border-radius: 3px; animation: pop .35s ease-out both; }
+.chip:nth-child(2) { animation-delay: .9s; } .chip:nth-child(3) { animation-delay: 1s; } .chip:nth-child(4) { animation-delay: 1.1s; } .chip:nth-child(5) { animation-delay: 1.2s; } .chip:nth-child(6) { animation-delay: 1.3s; } .chip:nth-child(7) { animation-delay: 1.4s; } .chip:nth-child(1) { animation-delay: .8s; }
+@keyframes pop { from { opacity: 0; transform: scale(.6); } }
+.scam { display: grid; gap: 4px; font-size: 12.5px; }
+.scam div { display: grid; grid-template-columns: 150px 1fr; gap: 8px; border-bottom: 1px dotted var(--rule); padding-bottom: 3px; }
+.scam div b { font-family: var(--mono); font-size: 11.5px; }
+.scam .rule { margin-top: 6px; font-family: var(--mono); font-size: 11.5px; color: var(--stop); border: 0; display: block; }
+
+/* ---------- scoring ---------- */
+.stack { display: flex; height: 64px; margin-top: 20px; border-radius: 4px; overflow: hidden; border: 2px solid var(--ink); }
+.seg { display: flex; flex-direction: column; justify-content: center; padding: 0 8px; border-right: 2px solid var(--ink); transform-origin: left; animation: wipe .6s ease-out both; overflow: hidden; white-space: nowrap; }
+.seg:last-child { border-right: 0; }
+.seg b { font-family: var(--display); font-size: 26px; line-height: .9; font-weight: 900; }
+.seg span { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: .04em; }
+.seg:nth-child(1) { background: var(--yellow); color: #14213d; }
+.seg:nth-child(2) { background: var(--go); color: #fff; animation-delay: .12s; }
+.seg:nth-child(3) { background: var(--board); color: #f2f4f8; animation-delay: .24s; }
+.seg:nth-child(4) { background: var(--card); animation-delay: .36s; }
+.seg:nth-child(5) { background: var(--rule); animation-delay: .48s; }
+.seg:nth-child(6) { background: var(--card); animation-delay: .6s; }
+.seg:nth-child(7) { background: var(--rule); animation-delay: .72s; }
+@keyframes wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+.scale { margin-top: 30px; position: relative; height: 84px; }
+.band { position: absolute; top: 18px; height: 30px; display: flex; align-items: center; padding: 0 10px; font-family: var(--mono); font-size: 12px; font-weight: 700; animation: wipe .7s ease-out both; }
+.band.no { left: 0; width: 70%; background: repeating-linear-gradient(135deg, transparent 0 6px, color-mix(in srgb, var(--stop) 18%, transparent) 6px 12px); color: var(--stop); border: 2px solid var(--stop); animation-delay: 1s; }
+.band.ok { left: 70%; width: 15%; background: var(--go); color: #fff; animation-delay: 1.2s; }
+.band.hi { left: 85%; width: 15%; background: var(--yellow); color: #14213d; animation-delay: 1.4s; }
+.tick { position: absolute; top: 52px; font-family: var(--mono); font-size: 11px; color: var(--muted); transform: translateX(-50%); }
+.tick::before { content: ""; display: block; width: 2px; height: 8px; background: var(--muted); margin: 0 auto 2px; }
+.weights-note { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; font-size: 13px; margin-top: 4px; }
+.weights-note div { border-left: 3px solid var(--ink); padding-left: 10px; }
+.weights-note b { font-family: var(--display); font-size: 18px; text-transform: uppercase; display: block; }
+
+/* ---------- inside claude ---------- */
+.dual { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 16px; }
+.term { background: #0b1222; color: #d8dee9; border-radius: 6px; padding: 0 0 12px; font-family: var(--mono); font-size: 12px; line-height: 1.6; overflow: hidden; }
+.term .bar { background: var(--board); padding: 6px 10px; display: flex; gap: 6px; align-items: center; color: #93a0b5; font-size: 10.5px; }
+.term .bar i { width: 9px; height: 9px; border-radius: 50%; background: #3a4766; display: inline-block; }
+.term .ln { padding: 0 14px; white-space: nowrap; overflow: hidden; animation: type .5s steps(30) both; }
+.term .ln.c { color: #ffcd3c; }
+.term .ln.r { color: #93a0b5; }
+.term .ln:nth-child(3) { animation-delay: .2s; } .term .ln:nth-child(4) { animation-delay: .5s; } .term .ln:nth-child(5) { animation-delay: .8s; } .term .ln:nth-child(6) { animation-delay: 1.1s; } .term .ln:nth-child(7) { animation-delay: 1.4s; } .term .ln:nth-child(8) { animation-delay: 1.7s; } .term .ln:nth-child(9) { animation-delay: 2s; } .term .ln:nth-child(10) { animation-delay: 2.3s; }
+@keyframes type { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+.skills { display: grid; gap: 8px; }
+.skill { display: grid; grid-template-columns: 190px 1fr; gap: 10px; align-items: center; background: var(--card); border: 1.5px solid var(--rule); border-left: 5px solid var(--go); padding: 8px 10px; font-size: 13px; animation: slide .45s ease-out both; }
+.skill code { font-family: var(--mono); font-size: 11.5px; font-weight: 700; }
+.skill:nth-child(2) { animation-delay: .15s; } .skill:nth-child(3) { animation-delay: .3s; }
+@keyframes slide { from { opacity: 0; transform: translateX(-14px); } }
+.tools { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 5px; }
+.tools code { font-family: var(--mono); font-size: 10.8px; padding: 2px 6px; background: var(--board); color: #f2f4f8; border-radius: 2px; animation: pop .3s ease-out both; }
+.tools code:nth-child(even) { animation-delay: .3s; } .tools code:nth-child(3n) { animation-delay: .6s; }
+.small { font-size: 12.5px; color: var(--muted); margin-top: 8px; }
+
+/* ---------- guardrails ---------- */
+.modes { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+.mode { border: 2px solid var(--ink); padding: 12px 14px; border-radius: 4px; position: relative; }
+.mode h3 { margin: 0 0 4px; font-family: var(--display); font-size: 24px; text-transform: uppercase; font-weight: 900; }
+.mode .tagm { position: absolute; top: 12px; right: 12px; font-family: var(--mono); font-size: 10.5px; padding: 2px 6px; background: var(--ink); color: var(--paper); }
+.mode p { margin: 0; font-size: 13.5px; }
+.halt { margin-top: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.halt h4 { margin: 0 0 8px; font-family: var(--mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.stamps { display: flex; flex-wrap: wrap; gap: 7px; }
+.stampx { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: 15px; letter-spacing: .03em; padding: 3px 9px; border: 2.5px solid var(--stop); color: var(--stop); border-radius: 3px; animation: stamp .4s cubic-bezier(.2,1.5,.4,1) both; }
+.stampx:nth-child(odd) { transform: rotate(-1.5deg); }
+.stampx:nth-child(2) { animation-delay: .15s; } .stampx:nth-child(3) { animation-delay: .3s; } .stampx:nth-child(4) { animation-delay: .45s; } .stampx:nth-child(5) { animation-delay: .6s; } .stampx:nth-child(6) { animation-delay: .75s; } .stampx:nth-child(7) { animation-delay: .9s; }
+@keyframes stamp { from { opacity: 0; transform: scale(1.6) rotate(-6deg); } }
+.never { list-style: none; padding: 0; margin: 0; display: grid; gap: 5px; font-size: 13.5px; }
+.never li { display: grid; grid-template-columns: 22px 1fr; animation: slide .4s ease-out both; }
+.never li::before { content: "×"; color: var(--stop); font-weight: 700; font-size: 17px; line-height: 1.1; }
+.never li:nth-child(2) { animation-delay: .1s; } .never li:nth-child(3) { animation-delay: .2s; } .never li:nth-child(4) { animation-delay: .3s; } .never li:nth-child(5) { animation-delay: .4s; } .never li:nth-child(6) { animation-delay: .5s; }
+
+/* ---------- setup ---------- */
+.steps3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 16px; }
+.st { background: var(--card); border: 1.5px solid var(--rule); padding: 12px 14px; border-radius: 4px; font-size: 13px; animation: rise .45s ease-out both; }
+.st:nth-child(2) { animation-delay: .15s; } .st:nth-child(3) { animation-delay: .3s; }
+.st .n { font-family: var(--display); font-size: 36px; font-weight: 900; line-height: .9; color: var(--go); }
+.st b { display: block; font-family: var(--display); font-size: 19px; text-transform: uppercase; margin: 4px 0 4px; }
+.st code { font-family: var(--mono); font-size: 11px; background: var(--board); color: #f2f4f8; padding: 2px 5px; display: inline-block; margin: 2px 0; border-radius: 2px; }
+.slots { margin-top: 16px; display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px; }
+.slot { display: grid; grid-template-columns: 220px 1fr; gap: 10px; font-size: 12.5px; padding: 4px 0; border-bottom: 1px dotted var(--rule); }
+.slot code { font-family: var(--mono); font-size: 11.5px; font-weight: 700; }
+.where { border: 2px dashed var(--ink); padding: 12px 14px; font-size: 13px; border-radius: 4px; }
+.where code { font-family: var(--mono); font-size: 11.5px; font-weight: 700; }
+
+/* ---------- responsive ---------- */
+</style>
+
+<main class="sheet">
+
+<section class="hero" data-panel="01_hero" data-alt="Job Search, a Claude plugin and CLI for APM, Product Analyst and AI Product roles. Quality first job discovery: it finds jobs, throws out the ones that waste your time, scores what is left against your actual profile, and keeps a permanent record so you never apply twice. Facts: 7 weighted scoring dimensions, 3 Claude skills, 10 MCP tools, 1 SQLite database with a full audit log. Animated departures board with example rows whose status cells flip from checking to a verdict: Associate PM in Bengaluru, high priority; Product Analyst, remote, good match; AI Product Analyst, hybrid Bengaluru, high priority; Backend Engineer, rejected role; Pay to apply listing, scam, rejected; Senior Product Manager, experience too high, rejected.">
+  <div>
+    <div class="kick"><span class="gate">Claude plugin</span><span>MCP server and CLI</span></div>
+    <h1>Fewer jobs. <span>Better</span> jobs. Never twice.</h1>
+    <p class="lede">Quality first job discovery and application tracking for APM, Product Analyst and AI Product roles. It finds jobs, throws out the ones that waste your time, scores the rest against your actual profile, and keeps a permanent record.</p>
+    <div class="facts">
+      <div><b>7</b>weighted scoring dimensions</div>
+      <div><b>3</b>skills inside Claude</div>
+      <div><b>10</b>MCP tools</div>
+      <div><b>1</b>SQLite file, full audit log</div>
+    </div>
+  </div>
+  <div class="board">
+    <div class="bhead">Departures <small>example rows</small></div>
+    <div class="cols"><span>Role</span><span>Where</span><span>Status</span></div>
+    <div class="row"><div class="fl">Associate PM</div><div class="fl y">Bengaluru</div><div class="stat"><span class="a">Checking</span><span class="b hi">High priority</span></div></div>
+    <div class="row"><div class="fl">Product Analyst</div><div class="fl y">Remote</div><div class="stat"><span class="a">Scoring</span><span class="b ok">Good match</span></div></div>
+    <div class="row"><div class="fl">AI Product Analyst</div><div class="fl y">Hybrid BLR</div><div class="stat"><span class="a">Checking</span><span class="b hi">High priority</span></div></div>
+    <div class="row"><div class="fl">Backend Engineer</div><div class="fl y">Bengaluru</div><div class="stat"><span class="a">Validating</span><span class="b no">Wrong role</span></div></div>
+    <div class="row"><div class="fl">Pay to apply listing</div><div class="fl y">Unknown</div><div class="stat"><span class="a">Validating</span><span class="b no">Scam</span></div></div>
+    <div class="row"><div class="fl">Senior Product Mgr</div><div class="fl y">Mumbai</div><div class="stat"><span class="a">Validating</span><span class="b no">Too senior</span></div></div>
+    <div class="bfoot"><span>Discovery mode: searches, scores, never submits</span><span class="blink">●</span></div>
+  </div>
+</section>
+
+<section data-panel="02_pipeline" data-alt="How a listing travels. Eight stops: discover (search queries tuned to target roles and location, general, LinkedIn and ATS), extract (company, title, location, work mode, experience, dates, URLs), validate, deduplicate (against everything already seen, including the same job reposted through a different source), score (0 to 100), select resume (the right variant per role), draft (application answers and recruiter outreach, flagging what needs your judgement), track (SQLite with a full audit log). Validation throws out engineering roles, sales roles, support roles, senior postings, scams, MLM schemes, and listings with no working application route. The scam detector checks five signal families: payment required (registration or processing fee, deposits), too good to be true (guaranteed placement), MLM and network marketing, vague employer (company name confidential), and suspicious contact (WhatsApp or Telegram only). Each matched signal adds 20 to a confidence score and 40 or more flags the listing as a scam.">
+  <div class="kick"><span class="gate">Route</span><span>discover → track</span></div>
+  <h2>Eight stops, two of them <span>gates</span></h2>
+  <div class="lane">
+    <div class="stop"><i>1</i><b>Discover</b><small>queries for general, LinkedIn and ATS</small></div>
+    <div class="stop"><i>2</i><b>Extract</b><small>title, company, location, URLs</small></div>
+    <div class="stop gate"><i>3</i><b>Validate</b><small>wrong roles, seniority, scams</small></div>
+    <div class="stop gate"><i>4</i><b>Dedupe</b><small>reposts via other sources too</small></div>
+    <div class="stop"><i>5</i><b>Score</b><small>0 to 100, seven dimensions</small></div>
+    <div class="stop"><i>6</i><b>Resume</b><small>right variant per role</small></div>
+    <div class="stop"><i>7</i><b>Draft</b><small>answers and outreach, flags judgement calls</small></div>
+    <div class="stop"><i>8</i><b>Track</b><small>SQLite plus audit log</small></div>
+  </div>
+  <div class="bins">
+    <div class="bin"><h3>Thrown out at the gate</h3>
+      <div class="chips"><span class="chip">engineering roles</span><span class="chip">sales roles</span><span class="chip">support roles</span><span class="chip">senior postings</span><span class="chip">scams</span><span class="chip">MLM schemes</span><span class="chip">no working application route</span></div>
+      <p class="small">Plus anything already seen, even when the same job is reposted through a different source.</p>
+    </div>
+    <div class="bin"><h3>Scam detector</h3>
+      <div class="scam">
+        <div><b>payment required</b><span>registration, processing or training fees, deposits</span></div>
+        <div><b>too good to be true</b><span>guaranteed placement, easy money</span></div>
+        <div><b>MLM network</b><span>network marketing, build your team</span></div>
+        <div><b>vague employer</b><span>company name confidential</span></div>
+        <div><b>suspicious contact</b><span>WhatsApp only, Telegram only</span></div>
+        <span class="rule">each signal adds 20 · 40 or more = scam</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-panel="03_scoring" data-alt="Scoring, 0 to 100 across seven weighted dimensions: role relevance 30, candidate fit 20, experience fit 15, location fit 10, company quality 10, recency 10, application quality 5. Verdicts: 85 and above is high priority, 70 to 84 is a good match, below 70 is do not apply. Role relevance carries the most weight because a perfect company with the wrong role is still the wrong job. Weights live in the candidate profile YAML, so they can be changed without code.">
+  <div class="kick"><span class="gate">Score</span><span>0 to 100</span></div>
+  <h2>Seven dimensions. <span>Role relevance</span> weighs the most.</h2>
+  <div class="stack">
+    <div class="seg" style="width:30%"><b>30</b><span>Role relevance</span></div>
+    <div class="seg" style="width:20%"><b>20</b><span>Candidate fit</span></div>
+    <div class="seg" style="width:15%"><b>15</b><span>Experience fit</span></div>
+    <div class="seg" style="width:10%"><b>10</b><span>Location</span></div>
+    <div class="seg" style="width:10%"><b>10</b><span>Company</span></div>
+    <div class="seg" style="width:10%"><b>10</b><span>Recency</span></div>
+    <div class="seg" style="width:5%"><b>5</b><span>App</span></div>
+  </div>
+  <div class="scale">
+    <div class="band no">below 70 · do not apply</div>
+    <div class="band ok">70 to 84 · good</div>
+    <div class="band hi">85+ · high</div>
+    <div class="tick" style="left:0%">0</div><div class="tick" style="left:70%">70</div><div class="tick" style="left:85%">85</div><div class="tick" style="left:99.5%">100</div>
+  </div>
+  <div class="weights-note">
+    <div><b>Application quality: 5</b>Official routes such as Greenhouse, Lever, Workday, Ashby and company career pages score higher.</div>
+    <div><b>Experience fit: 15</b>Tuned for fresher, entry level and early career postings.</div>
+    <div><b>All in one YAML</b>Weights, roles, locations and thresholds live in the profile file. No code changes.</div>
+  </div>
+</section>
+
+<section data-panel="04_inside" data-alt="Inside Claude and on the command line. Three skills: /job-search:find-jobs discovers, validates and scores new openings; /job-search:job-report gives the report, queue and stats from stored jobs; /job-search:apply-jobs prepares applications and outreach drafts. Claude also invokes them on its own when you ask in plain language, for example: find today's best AI Product and APM jobs in Bengaluru. Ten MCP tools: get_search_queries, submit_job_listings, get_daily_report, get_application_queue, get_stats, list_jobs, draft_answers, draft_recruiter_message, list_resume_variants, record_application. The same pipeline runs without Claude Desktop through plugin.py with discover, report, queue, stats, outreach and resumes commands.">
+  <div class="kick"><span class="gate">Platforms</span><span>Claude Desktop, Claude Code, terminal</span></div>
+  <h2>Ask in plain language, or <span>run it yourself</span></h2>
+  <div class="dual">
+    <div>
+      <div class="skills">
+        <div class="skill"><code>/job-search:find-jobs</code><span>Discover, validate and score new openings</span></div>
+        <div class="skill"><code>/job-search:job-report</code><span>Report, queue and stats from stored jobs</span></div>
+        <div class="skill"><code>/job-search:apply-jobs</code><span>Prepare applications and outreach drafts</span></div>
+      </div>
+      <div class="tools"><code>get_search_queries</code><code>submit_job_listings</code><code>get_daily_report</code><code>get_application_queue</code><code>get_stats</code><code>list_jobs</code><code>draft_answers</code><code>draft_recruiter_message</code><code>list_resume_variants</code><code>record_application</code></div>
+      <p class="small">“Find today's best AI Product and APM jobs in Bengaluru.” Claude calls get_search_queries, runs the searches, then submit_job_listings validates and scores the results.</p>
+    </div>
+    <div class="term">
+      <div class="bar"><i></i><i></i><i></i><span>the same pipeline without Claude Desktop</span></div>
+      <div class="ln r"># CLI</div>
+      <div class="ln c">$ python plugin.py discover</div>
+      <div class="ln r">  generate search queries</div>
+      <div class="ln c">$ python plugin.py report</div>
+      <div class="ln r">  daily report</div>
+      <div class="ln c">$ python plugin.py queue · stats</div>
+      <div class="ln r">  application queue, pipeline stats</div>
+      <div class="ln c">$ python plugin.py outreach · resumes</div>
+      <div class="ln r">  recruiter messages, resume variants</div>
+    </div>
+  </div>
+</section>
+
+<section data-panel="05_guardrails" data-alt="Guardrails. Two modes: discovery, the default, searches, validates, scores and ranks and never submits anything; application mode (set mode: application in the config) prepares applications and fills non sensitive fields, then stops. It always stops and hands back to you for legal declarations, compensation expectations, EEO and demographic questions, work authorization, relocation commitments, anything binding, and anything involving payment or financial details. It will not invent a recruiter, email, job ID, URL or company; fabricate experience, metrics or certifications; claim an application was submitted unless submission was confirmed; submit a duplicate application; or bypass CAPTCHA, MFA or bot protection. If a site cannot be reached it is marked unavailable rather than reported as processed.">
+  <div class="kick"><span class="gate">Guardrails</span><span>stops where judgement starts</span></div>
+  <h2>It prepares. <span>You</span> decide.</h2>
+  <div class="modes">
+    <div class="mode"><span class="tagm">default</span><h3>Discovery</h3><p>Searches, validates, scores, ranks. Never submits anything.</p></div>
+    <div class="mode"><span class="tagm">mode: application</span><h3>Application</h3><p>Prepares applications and fills non sensitive fields, then stops.</p></div>
+  </div>
+  <div class="halt">
+    <div><h4>Always comes back to you</h4>
+      <div class="stamps"><span class="stampx">Legal declarations</span><span class="stampx">Compensation</span><span class="stampx">EEO and demographics</span><span class="stampx">Work authorization</span><span class="stampx">Relocation</span><span class="stampx">Anything binding</span><span class="stampx">Payment details</span></div>
+    </div>
+    <div><h4>Will not</h4>
+      <ul class="never">
+        <li>Invent a recruiter, email, job ID, URL or company</li>
+        <li>Fabricate experience, metrics or certifications</li>
+        <li>Claim a submission that was not confirmed</li>
+        <li>Submit a duplicate application</li>
+        <li>Bypass CAPTCHA, MFA or bot protection</li>
+        <li>Report an unreachable site as processed</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-panel="06_setup" data-alt="Setup in three steps. 1, install the Python dependencies: pip install pyyaml and mcp 2.0 or newer. 2, load the plugin with claude --plugin-dir pointing at the folder or the zip. 3, run /plugin and look for job-search; the Errors tab reports a server that failed to start. Then edit job_search/config/candidate_profile.yaml with your name, links, education, experience, projects, target roles, locations and thresholds, and drop five resume variants in resumes/: resume_apm.pdf for APM and product management, resume_product_analytics.pdf for product analytics, resume_ai_product.pdf for AI product, resume_business_analyst.pdf for business and data analyst roles, resume_general.pdf as the fallback. The database job_applications.db has three tables (jobs, search_log, application_log) and stays local. Requires Python 3.11+, PyYAML and the MCP SDK 2.0+.">
+  <div class="kick"><span class="gate">Boarding</span><span>Python 3.11+ · PyYAML · MCP SDK 2.0+</span></div>
+  <h2>Three steps to <span>board</span></h2>
+  <div class="steps3">
+    <div class="st"><div class="n">1</div><b>Install deps</b><code>pip install pyyaml "mcp&gt;=2.0.0"</code><br>On the python3 that Claude launches.</div>
+    <div class="st"><div class="n">2</div><b>Load the plugin</b><code>claude --plugin-dir ./job-search</code><br>Folder or zip. Or unzip into your skills folder to auto load.</div>
+    <div class="st"><div class="n">3</div><b>Check it</b><code>/plugin</code><br>Look for job-search. The Errors tab shows a server that failed to start.</div>
+  </div>
+  <div class="slots">
+    <div>
+      <div class="slot"><code>resume_apm.pdf</code><span>APM, product management</span></div>
+      <div class="slot"><code>resume_product_analytics.pdf</code><span>Product analytics</span></div>
+      <div class="slot"><code>resume_ai_product.pdf</code><span>AI product</span></div>
+      <div class="slot"><code>resume_business_analyst.pdf</code><span>Business or data analyst</span></div>
+      <div class="slot"><code>resume_general.pdf</code><span>Fallback</span></div>
+    </div>
+    <div class="where"><b>Your profile:</b> <code>job_search/config/candidate_profile.yaml</code> holds everything the scorer and answer drafter use.<br><br><b>Your history:</b> <code>job_applications.db</code>, three tables (<code>jobs</code>, <code>search_log</code>, <code>application_log</code>). Stays local, survives plugin updates.</div>
+  </div>
+</section>
+
+</main>
